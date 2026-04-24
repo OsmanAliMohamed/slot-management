@@ -1,6 +1,6 @@
 <div class="page-header">
-  <h1>Generate Slots</h1>
-  <p class="subtitle">Configure a date range and slot duration to create new bookable slots</p>
+  <h1>{{ 'GENERATE.TITLE' | translate }}</h1>
+  <p class="subtitle">{{ 'GENERATE.SUBTITLE' | translate }}</p>
 </div>
 
 <div class="card">
@@ -8,28 +8,28 @@
 
     <div class="form-row">
       <div class="form-group">
-        <label for="startDate">Start Date</label>
+        <label for="startDate">{{ 'GENERATE.START_DATE' | translate }}</label>
         <input id="startDate" type="date" class="form-control" formControlName="startDate" />
         @if (startDate?.invalid && startDate?.touched) {
-          <div class="error">Start date is required.</div>
+          <div class="error">{{ 'GENERATE.START_REQUIRED' | translate }}</div>
         }
       </div>
 
       <div class="form-group">
-        <label for="endDate">End Date</label>
+        <label for="endDate">{{ 'GENERATE.END_DATE' | translate }}</label>
         <input id="endDate" type="date" class="form-control" formControlName="endDate" />
         @if (endDate?.invalid && endDate?.touched) {
-          <div class="error">End date is required.</div>
+          <div class="error">{{ 'GENERATE.END_REQUIRED' | translate }}</div>
         }
         @if (form.errors?.['dateRange'] && endDate?.touched) {
-          <div class="error">End date must be on or after start date.</div>
+          <div class="error">{{ 'GENERATE.DATE_RANGE_ERROR' | translate }}</div>
         }
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="timeZone">Time Zone</label>
+        <label for="timeZone">{{ 'GENERATE.TIMEZONE' | translate }}</label>
         <select id="timeZone" class="form-control" formControlName="timeZone">
           @for (tz of timeZones; track tz) {
             <option [value]="tz">{{ tz }}</option>
@@ -38,24 +38,24 @@
       </div>
 
       <div class="form-group">
-        <label for="slotDuration">Slot Duration (minutes)</label>
+        <label for="slotDuration">{{ 'GENERATE.DURATION' | translate }}</label>
         <input id="slotDuration" type="number" class="form-control" formControlName="slotDuration" min="1" />
         @if (slotDuration?.invalid && slotDuration?.touched) {
-          <div class="error">Slot duration must be a positive number.</div>
+          <div class="error">{{ 'GENERATE.DURATION_VALID' | translate }}</div>
         }
       </div>
     </div>
 
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" [disabled]="loading">
-        {{ loading ? 'Generating...' : 'Generate Slots' }}
+        {{ loading ? ('GENERATE.LOADING' | translate) : ('GENERATE.SUBMIT' | translate) }}
       </button>
     </div>
   </form>
 
   @if (result) {
     <div class="alert alert-success mt-3">
-      ✓ Successfully created <strong>{{ result.totalSlotsCreated }}</strong> slots.
+      ✓ {{ 'GENERATE.SUCCESS_PREFIX' | translate }} <strong>{{ result.totalSlotsCreated }}</strong> {{ 'GENERATE.SUCCESS_SUFFIX' | translate }}
     </div>
   }
   @if (errorMessage) {

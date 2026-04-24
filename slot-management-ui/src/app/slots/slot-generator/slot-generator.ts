@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { SlotService, GenerateSlotsResult } from '../slot.service';
 
 @Component({
   selector: 'app-slot-generator',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslateModule],
   templateUrl: './slot-generator.html',
   styleUrl: './slot-generator.scss'
 })

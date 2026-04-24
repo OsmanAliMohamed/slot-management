@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { SlotService } from '../slots/slot.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -26,57 +27,55 @@ interface PagedResult<T> { items: T[]; totalCount: number; }
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TranslateModule],
   template: `
     <div class="page-header">
-      <h1>Admin Portal</h1>
-      <p class="subtitle">System overview and user management</p>
+      <h1>{{ 'ADMIN.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'ADMIN.SUBTITLE' | translate }}</p>
     </div>
 
-    <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card stat-total">
         <div class="stat-value">{{ stats()?.totalSlots ?? '—' }}</div>
-        <div class="stat-label">Total Slots</div>
+        <div class="stat-label">{{ 'ADMIN.STAT_TOTAL' | translate }}</div>
       </div>
       <div class="stat-card stat-available">
         <div class="stat-value">{{ stats()?.availableSlots ?? '—' }}</div>
-        <div class="stat-label">Available</div>
+        <div class="stat-label">{{ 'ADMIN.STAT_AVAILABLE' | translate }}</div>
       </div>
       <div class="stat-card stat-booked">
         <div class="stat-value">{{ stats()?.bookedSlots ?? '—' }}</div>
-        <div class="stat-label">Booked</div>
+        <div class="stat-label">{{ 'ADMIN.STAT_BOOKED' | translate }}</div>
       </div>
       <div class="stat-card stat-users">
         <div class="stat-value">{{ totalUsers() }}</div>
-        <div class="stat-label">Users</div>
+        <div class="stat-label">{{ 'ADMIN.STAT_USERS' | translate }}</div>
       </div>
     </div>
 
-    <!-- User management -->
     <div class="card" style="margin-top:2rem">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-        <h2 style="margin:0;font-size:1.1rem">User Management</h2>
-        <input class="form-control" style="width:220px" placeholder="Search by username…"
+        <h2 style="margin:0;font-size:1.1rem">{{ 'ADMIN.USER_MGMT' | translate }}</h2>
+        <input class="form-control" style="width:220px" [placeholder]="'ADMIN.SEARCH_PLACEHOLDER' | translate"
                [(ngModel)]="searchText" (ngModelChange)="onSearch()" />
       </div>
 
       @if (loadingUsers()) {
-        <div class="loading">Loading users…</div>
+        <div class="loading">{{ 'ADMIN.LOADING_USERS' | translate }}</div>
       } @else if (users().length === 0) {
-        <div class="empty">No users found.</div>
+        <div class="empty">{{ 'ADMIN.NO_USERS' | translate }}</div>
       } @else {
         <div class="table-wrap">
-          <div class="result-count">{{ totalUsers() }} user(s)</div>
+          <div class="result-count">{{ totalUsers() }} {{ 'ADMIN.USER_COUNT' | translate }}</div>
           <table class="slots-table">
             <thead>
               <tr>
-                <th>Username</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Roles</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>{{ 'ADMIN.COL_USERNAME' | translate }}</th>
+                <th>{{ 'ADMIN.COL_NAME' | translate }}</th>
+                <th>{{ 'ADMIN.COL_EMAIL' | translate }}</th>
+                <th>{{ 'ADMIN.COL_ROLES' | translate }}</th>
+                <th>{{ 'ADMIN.COL_STATUS' | translate }}</th>
+                <th>{{ 'ADMIN.COL_ACTIONS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -96,29 +95,28 @@ interface PagedResult<T> { items: T[]; totalCount: number; }
                   </td>
                   <td>
                     @if (u.isActive) {
-                      <span class="badge badge-success">Active</span>
+                      <span class="badge badge-success">{{ 'ADMIN.STATUS_ACTIVE' | translate }}</span>
                     } @else {
-                      <span class="badge badge-danger">Inactive</span>
+                      <span class="badge badge-danger">{{ 'ADMIN.STATUS_INACTIVE' | translate }}</span>
                     }
                   </td>
                   <td>
                     @if (editingUserId() === u.id) {
-                      <button class="btn-cancel" (click)="cancelEdit()">Cancel</button>
+                      <button class="btn-cancel" (click)="cancelEdit()">{{ 'ADMIN.BTN_CANCEL' | translate }}</button>
                     } @else {
-                      <button class="btn-edit-roles" (click)="startEditRoles(u)">Edit Roles</button>
+                      <button class="btn-edit-roles" (click)="startEditRoles(u)">{{ 'ADMIN.BTN_EDIT_ROLES' | translate }}</button>
                     }
                   </td>
                 </tr>
 
-                <!-- Inline role editor row -->
                 @if (editingUserId() === u.id) {
                   <tr class="role-editor-row">
                     <td colspan="6">
                       <div class="role-editor">
-                        <span class="role-editor-title">Assign roles to <strong>{{ u.userName }}</strong>:</span>
+                        <span class="role-editor-title">{{ 'ADMIN.ASSIGN_ROLES_TO' | translate }} <strong>{{ u.userName }}</strong>:</span>
 
                         @if (loadingUserRoles()) {
-                          <span style="color:#888;font-size:0.9rem">Loading roles…</span>
+                          <span style="color:#888;font-size:0.9rem">{{ 'ADMIN.LOADING_ROLES' | translate }}</span>
                         } @else {
                           <div class="role-checkboxes">
                             @for (role of availableRoles(); track role.id) {
@@ -139,10 +137,10 @@ interface PagedResult<T> { items: T[]; totalCount: number; }
 
                           <div style="display:flex;gap:0.5rem;margin-top:0.75rem">
                             <button class="btn btn-primary btn-sm" (click)="saveRoles(u)" [disabled]="savingRoles()">
-                              {{ savingRoles() ? 'Saving…' : 'Save Roles' }}
+                              {{ savingRoles() ? ('ADMIN.SAVING' | translate) : ('ADMIN.SAVE_ROLES' | translate) }}
                             </button>
                             <button class="btn btn-sm" style="background:#ecf0f1;border:1px solid #ccc" (click)="cancelEdit()">
-                              Cancel
+                              {{ 'ADMIN.BTN_CANCEL' | translate }}
                             </button>
                           </div>
                         }
@@ -155,14 +153,13 @@ interface PagedResult<T> { items: T[]; totalCount: number; }
           </table>
         </div>
 
-        <!-- Pagination -->
         <div class="pagination">
-          <button class="page-btn" (click)="goToPage(userPage() - 1)" [disabled]="userPage() <= 1">‹ Prev</button>
+          <button class="page-btn" (click)="goToPage(userPage() - 1)" [disabled]="userPage() <= 1">{{ 'ADMIN.PREV' | translate }}</button>
           @for (p of pageNumbers(); track p) {
             <button class="page-btn" [class.active]="p === userPage()" (click)="goToPage(p)">{{ p }}</button>
           }
-          <button class="page-btn" (click)="goToPage(userPage() + 1)" [disabled]="userPage() >= totalUserPages()">Next ›</button>
-          <span class="page-info">Page {{ userPage() }} of {{ totalUserPages() }}</span>
+          <button class="page-btn" (click)="goToPage(userPage() + 1)" [disabled]="userPage() >= totalUserPages()">{{ 'ADMIN.NEXT' | translate }}</button>
+          <span class="page-info">{{ 'ADMIN.PAGE' | translate }} {{ userPage() }} {{ 'ADMIN.OF' | translate }} {{ totalUserPages() }}</span>
         </div>
       }
     </div>

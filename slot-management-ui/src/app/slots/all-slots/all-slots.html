@@ -1,20 +1,19 @@
 <div class="page-header">
-  <h1>All Slots</h1>
-  <p class="subtitle">Browse and manage every slot across all dates</p>
+  <h1>{{ 'ALL_SLOTS.TITLE' | translate }}</h1>
+  <p class="subtitle">{{ 'ALL_SLOTS.SUBTITLE' | translate }}</p>
 </div>
 
-<!-- Filters -->
 <div class="filters-bar">
   <div class="filter-group">
-    <label>Status</label>
+    <label>{{ 'ALL_SLOTS.FILTER_STATUS' | translate }}</label>
     <select [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()">
-      @for (s of statuses; track s.value) {
-        <option [value]="s.value">{{ s.label }}</option>
-      }
+      <option value="">{{ 'ALL_SLOTS.OPT_ALL' | translate }}</option>
+      <option value="Available">{{ 'ALL_SLOTS.OPT_AVAILABLE' | translate }}</option>
+      <option value="Booked">{{ 'ALL_SLOTS.OPT_BOOKED' | translate }}</option>
     </select>
   </div>
   <div class="filter-group">
-    <label>Display Time Zone</label>
+    <label>{{ 'ALL_SLOTS.FILTER_TIMEZONE' | translate }}</label>
     <select [(ngModel)]="selectedTimeZone" (ngModelChange)="onFilterChange()">
       @for (tz of timeZones; track tz) {
         <option [value]="tz">{{ tz }}</option>
@@ -22,7 +21,7 @@
     </select>
   </div>
   <div class="filter-group">
-    <label>Per page</label>
+    <label>{{ 'ALL_SLOTS.FILTER_PER_PAGE' | translate }}</label>
     <select [(ngModel)]="pageSize" (ngModelChange)="onFilterChange()">
       <option [value]="10">10</option>
       <option [value]="20">20</option>
@@ -40,14 +39,14 @@
 
 @if (result) {
   <div class="summary">
-    Showing
+    {{ 'ALL_SLOTS.SHOWING' | translate }}
     <strong>{{ (result.page - 1) * result.pageSize + 1 }}–{{ result.page * result.pageSize > result.totalCount ? result.totalCount : result.page * result.pageSize }}</strong>
-    of <strong>{{ result.totalCount }}</strong> slots
+    {{ 'ALL_SLOTS.OF' | translate }} <strong>{{ result.totalCount }}</strong> {{ 'ALL_SLOTS.SLOTS' | translate }}
   </div>
 }
 
 @if (loading) {
-  <div class="loading">Loading slots...</div>
+  <div class="loading">{{ 'ALL_SLOTS.LOADING' | translate }}</div>
 }
 
 @if (!loading && result && result.items.length > 0) {
@@ -55,13 +54,13 @@
     <table class="slots-table">
       <thead>
         <tr>
-          <th>#</th>
-          <th>Local Start Time</th>
-          <th>Local End Time</th>
-          <th>Duration</th>
-          <th>Time Zone</th>
-          <th>Status</th>
-          <th>Action</th>
+          <th>{{ 'ALL_SLOTS.COL_NUM' | translate }}</th>
+          <th>{{ 'ALL_SLOTS.COL_START' | translate }}</th>
+          <th>{{ 'ALL_SLOTS.COL_END' | translate }}</th>
+          <th>{{ 'ALL_SLOTS.COL_DURATION' | translate }}</th>
+          <th>{{ 'ALL_SLOTS.COL_TIMEZONE' | translate }}</th>
+          <th>{{ 'ALL_SLOTS.COL_STATUS' | translate }}</th>
+          <th>{{ 'ALL_SLOTS.COL_ACTION' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -70,25 +69,25 @@
             <td class="row-num">{{ (result.page - 1) * result.pageSize + i + 1 }}</td>
             <td>{{ slot.localStartTime }}</td>
             <td>{{ slot.localEndTime }}</td>
-            <td>{{ slot.durationMinutes }} min</td>
+            <td>{{ slot.durationMinutes }} {{ 'ALL_SLOTS.MIN' | translate }}</td>
             <td>{{ slot.timeZone }}</td>
             <td>
               @if (justBookedId === slot.id) {
-                <span class="badge badge-booked">Booked ✓</span>
+                <span class="badge badge-booked">{{ 'ALL_SLOTS.STATUS_BOOKED_CHECK' | translate }}</span>
               } @else if (slot.isBookable) {
-                <span class="badge badge-success">Available</span>
+                <span class="badge badge-success">{{ 'ALL_SLOTS.STATUS_AVAILABLE' | translate }}</span>
               } @else {
-                <span class="badge badge-danger">Booked</span>
+                <span class="badge badge-danger">{{ 'ALL_SLOTS.STATUS_BOOKED' | translate }}</span>
               }
             </td>
             <td>
               @if (justBookedId === slot.id) {
-                <button class="btn btn-sm btn-booked" disabled>Booked ✓</button>
+                <button class="btn btn-sm btn-booked" disabled>{{ 'ALL_SLOTS.BTN_BOOKED' | translate }}</button>
               } @else if (slot.isBookable) {
                 <button class="btn btn-sm btn-book"
                         [disabled]="!!bookingSlotId"
                         (click)="bookSlot(slot.id)">
-                  {{ bookingSlotId === slot.id ? 'Booking...' : 'Book' }}
+                  {{ bookingSlotId === slot.id ? ('ALL_SLOTS.BTN_BOOKING' | translate) : ('ALL_SLOTS.BTN_BOOK' | translate) }}
                 </button>
               }
             </td>
@@ -100,7 +99,7 @@
 }
 
 @if (!loading && result && result.items.length === 0) {
-  <div class="empty">No slots found. Try changing the filter or generate some slots first.</div>
+  <div class="empty">{{ 'ALL_SLOTS.EMPTY' | translate }}</div>
 }
 
 @if (result && result.totalPages > 1) {
@@ -112,6 +111,6 @@
     }
     <button class="page-btn" [disabled]="result.page === result.totalPages" (click)="goToPage(result.page + 1)">›</button>
     <button class="page-btn" [disabled]="result.page === result.totalPages" (click)="goToPage(result.totalPages)">»</button>
-    <span class="page-info">Page {{ result.page }} of {{ result.totalPages }}</span>
+    <span class="page-info">{{ 'ALL_SLOTS.PAGE' | translate }} {{ result.page }} {{ 'ALL_SLOTS.OF_PAGES' | translate }} {{ result.totalPages }}</span>
   </div>
 }

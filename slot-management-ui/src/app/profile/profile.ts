@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
 import { environment } from '../../environments/environment';
 
 interface MyProfile {
@@ -21,23 +22,22 @@ function passwordMatch(c: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslateModule],
   template: `
     <div class="page-header">
-      <h1>My Profile</h1>
-      <p class="subtitle">View and update your account details</p>
+      <h1>{{ 'PROFILE.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'PROFILE.SUBTITLE' | translate }}</p>
     </div>
 
-    <!-- Profile card -->
     <div class="card">
-      <h2 style="margin:0 0 1.25rem;font-size:1.1rem">Account Information</h2>
+      <h2 style="margin:0 0 1.25rem;font-size:1.1rem">{{ 'PROFILE.ACCOUNT_INFO' | translate }}</h2>
 
       @if (loadError()) {
         <div class="alert alert-danger">{{ loadError() }}</div>
       }
 
       @if (loading()) {
-        <div class="loading">Loading profile…</div>
+        <div class="loading">{{ 'PROFILE.LOADING' | translate }}</div>
       } @else {
         @if (profileMsg()) {
           <div class="alert" [class.alert-success]="profileOk()" [class.alert-danger]="!profileOk()">
@@ -48,44 +48,43 @@ function passwordMatch(c: AbstractControl): ValidationErrors | null {
         <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
           <div class="form-row">
             <div class="form-group">
-              <label>First Name</label>
-              <input class="form-control" formControlName="name" placeholder="First name" />
+              <label>{{ 'PROFILE.FIRST_NAME' | translate }}</label>
+              <input class="form-control" formControlName="name" />
             </div>
             <div class="form-group">
-              <label>Last Name</label>
-              <input class="form-control" formControlName="surname" placeholder="Last name" />
+              <label>{{ 'PROFILE.LAST_NAME' | translate }}</label>
+              <input class="form-control" formControlName="surname" />
             </div>
           </div>
           <div class="form-group">
-            <label>Username</label>
-            <input class="form-control" formControlName="userName" placeholder="Username" />
+            <label>{{ 'PROFILE.USERNAME' | translate }}</label>
+            <input class="form-control" formControlName="userName" />
             @if (profileForm.get('userName')?.invalid && profileForm.get('userName')?.touched) {
-              <span class="error">Username is required</span>
+              <span class="error">{{ 'PROFILE.USERNAME_REQUIRED' | translate }}</span>
             }
           </div>
           <div class="form-group">
-            <label>Email</label>
-            <input class="form-control" type="email" formControlName="email" placeholder="Email" />
+            <label>{{ 'PROFILE.EMAIL' | translate }}</label>
+            <input class="form-control" type="email" formControlName="email" />
             @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
-              <span class="error">Valid email is required</span>
+              <span class="error">{{ 'PROFILE.EMAIL_REQUIRED' | translate }}</span>
             }
           </div>
           <div class="form-group">
-            <label>Phone Number</label>
-            <input class="form-control" formControlName="phoneNumber" placeholder="Phone (optional)" />
+            <label>{{ 'PROFILE.PHONE' | translate }}</label>
+            <input class="form-control" formControlName="phoneNumber" />
           </div>
           <div class="form-actions">
             <button class="btn btn-primary" type="submit" [disabled]="profileForm.invalid || saving()">
-              {{ saving() ? 'Saving…' : 'Save Changes' }}
+              {{ saving() ? ('PROFILE.SAVING' | translate) : ('PROFILE.SAVE' | translate) }}
             </button>
           </div>
         </form>
       }
     </div>
 
-    <!-- Change password card -->
     <div class="card">
-      <h2 style="margin:0 0 1.25rem;font-size:1.1rem">Change Password</h2>
+      <h2 style="margin:0 0 1.25rem;font-size:1.1rem">{{ 'PROFILE.CHANGE_PASSWORD' | translate }}</h2>
 
       @if (pwMsg()) {
         <div class="alert" [class.alert-success]="pwOk()" [class.alert-danger]="!pwOk()">
@@ -95,26 +94,26 @@ function passwordMatch(c: AbstractControl): ValidationErrors | null {
 
       <form [formGroup]="pwForm" (ngSubmit)="changePassword()">
         <div class="form-group">
-          <label>Current Password</label>
+          <label>{{ 'PROFILE.CURRENT_PASSWORD' | translate }}</label>
           <input class="form-control" type="password" formControlName="currentPassword" />
         </div>
         <div class="form-group">
-          <label>New Password</label>
+          <label>{{ 'PROFILE.NEW_PASSWORD' | translate }}</label>
           <input class="form-control" type="password" formControlName="newPassword" />
           @if (pwForm.get('newPassword')?.hasError('minlength') && pwForm.get('newPassword')?.touched) {
-            <span class="error">Password must be at least 6 characters</span>
+            <span class="error">{{ 'PROFILE.PASSWORD_MIN' | translate }}</span>
           }
         </div>
         <div class="form-group">
-          <label>Confirm New Password</label>
+          <label>{{ 'PROFILE.CONFIRM_PASSWORD' | translate }}</label>
           <input class="form-control" type="password" formControlName="confirmPassword" />
           @if (pwForm.hasError('mismatch') && pwForm.get('confirmPassword')?.touched) {
-            <span class="error">Passwords do not match</span>
+            <span class="error">{{ 'PROFILE.PASSWORDS_MISMATCH' | translate }}</span>
           }
         </div>
         <div class="form-actions">
           <button class="btn btn-primary" type="submit" [disabled]="pwForm.invalid || changingPw()">
-            {{ changingPw() ? 'Updating…' : 'Change Password' }}
+            {{ changingPw() ? ('PROFILE.UPDATING' | translate) : ('PROFILE.UPDATE' | translate) }}
           </button>
         </div>
       </form>

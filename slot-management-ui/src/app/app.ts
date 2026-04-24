@@ -1,33 +1,35 @@
 import { Component, inject, computed } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from './auth/auth.service';
+import { LangService } from './i18n/lang.service';
 import { filter, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
-
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslateModule],
   template: `
     @if (showNav()) {
       <header>
         <div class="header-inner">
-          <span class="logo">📅 Slot Management</span>
+          <span class="logo">📅 {{ 'LOGIN.TITLE' | translate }}</span>
           <nav>
             @if (auth.isAdmin()) {
-              <a routerLink="/generate"   routerLinkActive="active">Generate</a>
+              <a routerLink="/generate" routerLinkActive="active">{{ 'NAV.GENERATE' | translate }}</a>
             }
-            <a routerLink="/next-slots" routerLinkActive="active">Next Available</a>
-            <a routerLink="/all-slots"  routerLinkActive="active">All Slots</a>
+            <a routerLink="/next-slots" routerLinkActive="active">{{ 'NAV.NEXT_AVAILABLE' | translate }}</a>
+            <a routerLink="/all-slots"  routerLinkActive="active">{{ 'NAV.ALL_SLOTS' | translate }}</a>
             @if (auth.isAdmin()) {
-              <a routerLink="/admin" routerLinkActive="active">Admin</a>
+              <a routerLink="/admin" routerLinkActive="active">{{ 'NAV.ADMIN' | translate }}</a>
             }
           </nav>
           <div class="user-area">
+            <button class="btn-lang" (click)="lang.toggle()">{{ 'NAV.LANG_SWITCH' | translate }}</button>
             @if (auth.currentUser()) {
               <a routerLink="/profile" routerLinkActive="active" class="profile-link">👤 {{ auth.currentUser()!.username }}</a>
-              <button class="btn-logout" (click)="auth.logout()">Sign out</button>
+              <button class="btn-logout" (click)="auth.logout()">{{ 'NAV.SIGN_OUT' | translate }}</button>
             }
           </div>
         </div>
@@ -48,7 +50,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
       display: flex; align-items: center; height: 56px; gap: 1rem;
     }
     .logo { font-size: 1.1rem; font-weight: bold; white-space: nowrap; }
-    nav { display: flex; gap: 0.2rem; flex: 1; }
+    nav { display: flex; gap: 0.2rem; flex: 1; flex-wrap: wrap; }
     nav a {
       color: rgba(255,255,255,0.75); text-decoration: none;
       padding: 0.4rem 0.9rem; border-radius: 6px; font-size: 0.9rem;
@@ -56,13 +58,17 @@ import { toSignal } from '@angular/core/rxjs-interop';
       &:hover { background: rgba(255,255,255,0.1); color: white; }
       &.active { background: rgba(255,255,255,0.18); color: white; font-weight: 600; }
     }
-    .user-area { display: flex; align-items: center; gap: 0.75rem; }
-    .username { font-size: 0.9rem; color: rgba(255,255,255,0.85); }
+    .user-area { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
     .profile-link {
       font-size: 0.9rem; color: rgba(255,255,255,0.85); text-decoration: none;
       padding: 0.3rem 0.6rem; border-radius: 5px;
       &:hover { background: rgba(255,255,255,0.1); color: white; }
       &.active { color: white; }
+    }
+    .btn-lang {
+      background: rgba(255,255,255,0.12); color: white; border: 1px solid rgba(255,255,255,0.25);
+      padding: 0.3rem 0.75rem; border-radius: 5px; cursor: pointer; font-size: 0.85rem;
+      &:hover { background: rgba(255,255,255,0.22); }
     }
     .btn-logout {
       background: rgba(231,76,60,0.8); color: white; border: none;
@@ -75,6 +81,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export class App {
   auth = inject(AuthService);
+  lang = inject(LangService);
 
   private url = toSignal(
     inject(Router).events.pipe(
