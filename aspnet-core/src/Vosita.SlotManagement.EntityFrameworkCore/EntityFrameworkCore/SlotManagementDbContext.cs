@@ -65,7 +65,7 @@ public class SlotManagementDbContext :
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
 
-        // Convert NodaTime Instant to UTC DateTime for PostgreSQL timestamptz storage
+        // Convert NodaTime Instant to UTC DateTime for SQL Server datetime2 storage
         var instantConverter = new ValueConverter<Instant, DateTime>(
             instant => instant.ToDateTimeUtc(),
             dt => Instant.FromDateTimeUtc(DateTime.SpecifyKind(dt, DateTimeKind.Utc))
@@ -75,8 +75,8 @@ public class SlotManagementDbContext :
         {
             b.ToTable(SlotManagementConsts.DbTablePrefix + "Slots", SlotManagementConsts.DbSchema);
             b.ConfigureByConvention();
-            b.Property(s => s.StartInstant).HasConversion(instantConverter).HasColumnType("timestamptz");
-            b.Property(s => s.EndInstant).HasConversion(instantConverter).HasColumnType("timestamptz");
+            b.Property(s => s.StartInstant).HasConversion(instantConverter).HasColumnType("datetime2");
+            b.Property(s => s.EndInstant).HasConversion(instantConverter).HasColumnType("datetime2");
             b.Property(s => s.CreationTimeZone).HasMaxLength(100).IsRequired();
             b.Property(s => s.Status).IsRequired();
             b.HasIndex(s => s.StartInstant);

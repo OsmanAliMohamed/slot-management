@@ -17,7 +17,7 @@ public class SlotManagementDbContextFactory : IDesignTimeDbContextFactory<SlotMa
         var configuration = BuildConfiguration();
 
         var builder = new DbContextOptionsBuilder<SlotManagementDbContext>()
-            .UseNpgsql(configuration.GetConnectionString("Default"));
+            .UseSqlServer(configuration.GetConnectionString("Default"));
 
         return new SlotManagementDbContext(builder.Options);
     }
