@@ -1,0 +1,19 @@
+# .NET
+**/bin/
+**/obj/
+**/Logs/
+*.user
+*.suo
+.vs/
+aspnet-core/src/Vosita.SlotManagement.HttpApi.Host/appsettings.secrets.json
+aspnet-core/src/Vosita.SlotManagement.DbMigrator/appsettings.secrets.json
+
+# Angular
+slot-management-ui/node_modules/
+slot-management-ui/dist/
+slot-management-ui/.angular/
+
+# General
+.env
+*.mdf
+*.ldf

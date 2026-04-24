@@ -1,0 +1,117 @@
+<div class="page-header">
+  <h1>All Slots</h1>
+  <p class="subtitle">Browse and manage every slot across all dates</p>
+</div>
+
+<!-- Filters -->
+<div class="filters-bar">
+  <div class="filter-group">
+    <label>Status</label>
+    <select [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()">
+      @for (s of statuses; track s.value) {
+        <option [value]="s.value">{{ s.label }}</option>
+      }
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Display Time Zone</label>
+    <select [(ngModel)]="selectedTimeZone" (ngModelChange)="onFilterChange()">
+      @for (tz of timeZones; track tz) {
+        <option [value]="tz">{{ tz }}</option>
+      }
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Per page</label>
+    <select [(ngModel)]="pageSize" (ngModelChange)="onFilterChange()">
+      <option [value]="10">10</option>
+      <option [value]="20">20</option>
+      <option [value]="50">50</option>
+    </select>
+  </div>
+</div>
+
+@if (successMessage) {
+  <div class="alert alert-success mt-3">✓ {{ successMessage }}</div>
+}
+@if (errorMessage) {
+  <div class="alert alert-danger mt-3">✗ {{ errorMessage }}</div>
+}
+
+@if (result) {
+  <div class="summary">
+    Showing
+    <strong>{{ (result.page - 1) * result.pageSize + 1 }}–{{ result.page * result.pageSize > result.totalCount ? result.totalCount : result.page * result.pageSize }}</strong>
+    of <strong>{{ result.totalCount }}</strong> slots
+  </div>
+}
+
+@if (loading) {
+  <div class="loading">Loading slots...</div>
+}
+
+@if (!loading && result && result.items.length > 0) {
+  <div class="table-wrap">
+    <table class="slots-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Local Start Time</th>
+          <th>Local End Time</th>
+          <th>Duration</th>
+          <th>Time Zone</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (slot of result.items; track slot.id; let i = $index) {
+          <tr [class.row-booked]="justBookedId === slot.id">
+            <td class="row-num">{{ (result.page - 1) * result.pageSize + i + 1 }}</td>
+            <td>{{ slot.localStartTime }}</td>
+            <td>{{ slot.localEndTime }}</td>
+            <td>{{ slot.durationMinutes }} min</td>
+            <td>{{ slot.timeZone }}</td>
+            <td>
+              @if (justBookedId === slot.id) {
+                <span class="badge badge-booked">Booked ✓</span>
+              } @else if (slot.isBookable) {
+                <span class="badge badge-success">Available</span>
+              } @else {
+                <span class="badge badge-danger">Booked</span>
+              }
+            </td>
+            <td>
+              @if (justBookedId === slot.id) {
+                <button class="btn btn-sm btn-booked" disabled>Booked ✓</button>
+              } @else if (slot.isBookable) {
+                <button class="btn btn-sm btn-book"
+                        [disabled]="!!bookingSlotId"
+                        (click)="bookSlot(slot.id)">
+                  {{ bookingSlotId === slot.id ? 'Booking...' : 'Book' }}
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (!loading && result && result.items.length === 0) {
+  <div class="empty">No slots found. Try changing the filter or generate some slots first.</div>
+}
+
+@if (result && result.totalPages > 1) {
+  <div class="pagination">
+    <button class="page-btn" [disabled]="result.page === 1" (click)="goToPage(1)">«</button>
+    <button class="page-btn" [disabled]="result.page === 1" (click)="goToPage(result.page - 1)">‹</button>
+    @for (p of pages; track p) {
+      <button class="page-btn" [class.active]="p === result.page" (click)="goToPage(p)">{{ p }}</button>
+    }
+    <button class="page-btn" [disabled]="result.page === result.totalPages" (click)="goToPage(result.page + 1)">›</button>
+    <button class="page-btn" [disabled]="result.page === result.totalPages" (click)="goToPage(result.totalPages)">»</button>
+    <span class="page-info">Page {{ result.page }} of {{ result.totalPages }}</span>
+  </div>
+}

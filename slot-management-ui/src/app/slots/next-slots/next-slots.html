@@ -1,0 +1,86 @@
+<div class="page-header">
+  <h1>Next Available Slots</h1>
+  <p class="subtitle">Upcoming bookable slots ordered by start time</p>
+</div>
+
+<!-- Filters -->
+<div class="filters-bar">
+  <div class="filter-group">
+    <label>Display Time Zone</label>
+    <select [(ngModel)]="selectedTimeZone" (ngModelChange)="onFilterChange()">
+      @for (tz of timeZones; track tz) {
+        <option [value]="tz">{{ tz }}</option>
+      }
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Show</label>
+    <select [(ngModel)]="selectedCount" (ngModelChange)="onFilterChange()">
+      @for (c of countOptions; track c) {
+        <option [value]="c">{{ c }} slots</option>
+      }
+    </select>
+  </div>
+  <button class="btn btn-refresh" (click)="loadSlots()" [disabled]="loading">↻ Refresh</button>
+</div>
+
+@if (successMessage) {
+  <div class="alert alert-success mt-3">✓ {{ successMessage }}</div>
+}
+@if (errorMessage) {
+  <div class="alert alert-danger mt-3">✗ {{ errorMessage }}</div>
+}
+@if (loading) {
+  <div class="loading">Loading slots...</div>
+}
+@if (!loading && slots.length === 0 && !errorMessage) {
+  <div class="empty">No available slots found. Generate some slots first.</div>
+}
+
+@if (!loading && slots.length > 0) {
+  <div class="table-wrap">
+    <div class="result-count">Showing {{ slots.length }} slot{{ slots.length !== 1 ? 's' : '' }}</div>
+    <table class="slots-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Local Start Time</th>
+          <th>Local End Time</th>
+          <th>Duration</th>
+          <th>Time Zone</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (slot of slots; track slot.id; let i = $index) {
+          <tr [class.row-booked]="justBookedId === slot.id">
+            <td class="row-num">{{ i + 1 }}</td>
+            <td>{{ slot.localStartTime }}</td>
+            <td>{{ slot.localEndTime }}</td>
+            <td>{{ slot.durationMinutes }} min</td>
+            <td>{{ slot.timeZone }}</td>
+            <td>
+              @if (justBookedId === slot.id) {
+                <span class="badge badge-booked">Booked ✓</span>
+              } @else {
+                <span class="badge badge-success">Available</span>
+              }
+            </td>
+            <td>
+              @if (justBookedId === slot.id) {
+                <button class="btn btn-sm btn-booked" disabled>Booked ✓</button>
+              } @else {
+                <button class="btn btn-sm btn-book"
+                        [disabled]="!!bookingSlotId"
+                        (click)="bookSlot(slot.id)">
+                  {{ bookingSlotId === slot.id ? 'Booking...' : 'Book' }}
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

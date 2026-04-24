@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Vosita.SlotManagement</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Vosita.SlotManagement.Domain\Vosita.SlotManagement.Domain.csproj" />
+    <ProjectReference Include="..\Vosita.SlotManagement.TestBase\Vosita.SlotManagement.TestBase.csproj" />
+  </ItemGroup>
+
+</Project>

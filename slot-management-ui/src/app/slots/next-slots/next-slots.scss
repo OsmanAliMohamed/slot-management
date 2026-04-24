@@ -1,0 +1,50 @@
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+.card-header {
+  background: #27ae60;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  h2 { margin: 0; font-size: 1.2rem; }
+  .tz-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    label { color: white; margin: 0; }
+    select { padding: 0.25rem 0.5rem; border-radius: 4px; }
+  }
+}
+.card-body { padding: 1.5rem; overflow-x: auto; }
+.loading, .empty { color: #666; text-align: center; padding: 2rem; }
+
+.row-booked {
+  background: #d4edda !important;
+  transition: background 0.3s ease;
+}
+
+.badge-booked {
+  background: #28a745;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.btn-booked {
+  background: #28a745;
+  color: white;
+  border-radius: 4px;
+  border: none;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  opacity: 0.85;
+}
